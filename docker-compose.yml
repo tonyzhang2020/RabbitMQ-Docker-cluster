@@ -1,14 +1,13 @@
-version: "3"
+version: "3.3"
 services:
   rabbit1:
     image: rabbitmq:3-management
     hostname: rabbit1
     environment:
-      RABBITMQ_ERLANG_COOKIE: "secret string"
+      RABBITMQ_ERLANG_COOKIE: "123456"
       RABBITMQ_NODENAME: rabbit1
-    volumes:
-      - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config"
-      - "./definitions.json:/etc/rabbitmq/definitions.json"
+    depends_on:
+      - rabbit3
     ports:
       - "4369:4369"
       - "5671:5671"
@@ -17,31 +16,47 @@ services:
       - "15672:15672"
       - "25672:25672"
 
+    configs:
+      - source: rabbitmq_config
+        target: /etc/rabbitmq/rabbitmq.config
+      - source: definitons_json
+        target: /etc/rabbitmq/definitions.json
+
   rabbit2:
     image: rabbitmq:3-management
     hostname: rabbit2
-    depends_on:
-      - rabbit1
+
     environment:
-      RABBITMQ_ERLANG_COOKIE: "secret string"
+      RABBITMQ_ERLANG_COOKIE: "123456"
       RABBITMQ_NODENAME: rabbit2
-    volumes:
-      - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config"
-      - "./definitions.json:/etc/rabbitmq/definitions.json"
+    depends_on:
+      - rabbit3
+    configs:
+      - source: rabbitmq_config
+        target: /etc/rabbitmq/rabbitmq.config
+      - source: definitons_json
+        target: /etc/rabbitmq/definitions.json
     
   rabbit3:
     image: rabbitmq:3-management
     hostname: rabbit3
-    depends_on:
-      - rabbit1
     environment:
       RABBITMQ_ERLANG_COOKIE: "secret string"
       RABBITMQ_NODENAME: rabbit3
-    volumes:
-      - "./rabbitmq.config:/etc/rabbitmq/rabbitmq.config"
-      - "./definitions.json:/etc/rabbitmq/definitions.json"
+
+    configs:
+      - source: rabbitmq_config
+        target: /etc/rabbitmq/rabbitmq.config
+      - source: definitons_json
+        target: /etc/rabbitmq/definitions.json
+
+configs:
+  rabbitmq_config:
+    file: ./rabbitmq.config
+  definitons_json:
+    file: ./definitions.json
 
 networks:
   default:
     external:
-      name: rabbitmq-cluster
+      name: app
