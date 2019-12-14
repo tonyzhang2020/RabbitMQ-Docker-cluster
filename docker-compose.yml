@@ -41,7 +41,7 @@ services:
     image: rabbitmq:3-management
     hostname: rabbit3
     environment:
-      RABBITMQ_ERLANG_COOKIE: "secret string"
+      RABBITMQ_ERLANG_COOKIE: "123456"
       RABBITMQ_NODENAME: rabbit3
 
     configs:
